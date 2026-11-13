@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Falatório</title>
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">
+        <h1>Falatório</h1>
+        <span class="tagline">On-device speech playground</span>
+      </div>
+      <div class="seg" id="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="pt" aria-pressed="false">PT-PT</button>
+      </div>
+      <p class="diag" id="diag">WebGPU: … · backend: — · cache: …</p>
+    </header>
+
+    <nav class="tabs" role="tablist">
+      <button type="button" role="tab" data-tab="speak" aria-selected="true">Speak</button>
+      <button type="button" role="tab" data-tab="listen" aria-selected="false">Listen</button>
+    </nav>
+
+    <div class="model-bar">
+      <span id="modelStatus">No model in memory</span>
+      <button type="button" id="unload" class="small" disabled>Unload model</button>
+    </div>
+
+    <main>
+      <!-- Tab 1: TTS -->
+      <section id="tab-speak" class="panel" role="tabpanel">
+        <div class="field">
+          <label for="ttsEngine">Engine</label>
+          <select id="ttsEngine"></select>
+        </div>
+        <div class="field">
+          <label for="ttsVoice">Voice</label>
+          <select id="ttsVoice"></select>
+        </div>
+        <div class="field" id="kokoroVariant" hidden>
+          <span class="label">Precision / device</span>
+          <div class="seg wide">
+            <button type="button" data-variant="q8" aria-pressed="true">q8 · WASM · 92 MB</button>
+            <button type="button" data-variant="fp32" aria-pressed="false">fp32 · WebGPU · 326 MB</button>
+          </div>
+        </div>
+
+        <div class="presets" id="presets"></div>
+
+        <div class="field">
+          <label for="ttsText">Text</label>
+          <textarea id="ttsText" rows="5" spellcheck="false"></textarea>
+          <div class="count" id="ttsCount"></div>
+        </div>
+
+        <button type="button" id="speak" class="primary">▶ Speak</button>
+
+        <div class="progress" id="ttsProgress" hidden>
+          <div class="track"><div class="bar"></div></div>
+          <span class="label"></span>
+        </div>
+        <p class="status" id="ttsStatus" hidden></p>
+        <p class="error" id="ttsError" role="alert" hidden></p>
+
+        <div class="result" id="ttsResult" hidden>
+          <div class="player">
+            <audio id="ttsAudio" controls hidden></audio>
+            <a id="ttsDownload" class="button small" hidden>⬇ WAV</a>
+          </div>
+          <dl class="stats" id="ttsStats"></dl>
+        </div>
+      </section>
+
+      <!-- Tab 2: STT -->
+      <section id="tab-listen" class="panel" role="tabpanel" hidden>
+        <div class="field">
+          <label for="sttEngine">Engine</label>
+          <select id="sttEngine"></select>
+        </div>
+        <div class="field" id="whisperDevice">
+          <span class="label">Device</span>
+          <div class="seg wide">
+            <button type="button" data-device="wasm" aria-pressed="true">WASM</button>
+            <button type="button" data-device="webgpu" aria-pressed="false">WebGPU</button>
+          </div>
+        </div>
+        <button type="button" id="sttLoad">Load model</button>
+        <div class="progress" id="sttProgress" hidden>
+          <div class="track"><div class="bar"></div></div>
+          <span class="label"></span>
+        </div>
+        <p class="error" id="sttError" role="alert" hidden></p>
+
+        <div class="recorder">
+          <button type="button" id="record" class="record" aria-label="Start recording" disabled><span></span></button>
+          <div class="rec-info">
+            <span id="recordHint" class="hint"></span>
+            <span id="countdown" class="countdown">30 s</span>
+            <div class="meter" id="meter"><div></div></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label for="transcript">Transcript</label>
+            <button type="button" id="copy" class="small">Copy</button>
+          </div>
+          <textarea id="transcript" rows="5" readonly></textarea>
+        </div>
+        <dl class="stats" id="sttStats"></dl>
+
+        <div class="rerun">
+          <button type="button" id="rerun" disabled>↻ Re-run on last recording</button>
+          <audio id="lastRec" controls hidden></audio>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <button type="button" id="clearCache" class="small">Clear model cache</button>
+      <a href="https://github.com/retrofootprints/falatorio">Source &amp; model licences</a>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
